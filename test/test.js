@@ -5,32 +5,32 @@ var PourOver = require('../');
 describe('Basic Operations', function() {
   describe('Union Sorts', function() {
     it('should run a Standard Union 1', function() {
-      this.output = PourOver.union_sorted([1,3,7,8,9], [1,2,3,4,5,15]);
+      this.output = PourOver.unionSort([1,3,7,8,9], [1,2,3,4,5,15]);
       this.expected = [1,2,3,4,5,7,8,9,15];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Standard Union 2', function() {
-      this.output = PourOver.union_sorted([1,3,7,8,9,14,20,70], [4,5,15]);
+      this.output = PourOver.unionSort([1,3,7,8,9,14,20,70], [4,5,15]);
       this.expected = [1,3,4,5,7,8,9,14,15,20,70];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Union 1', function() {
-      this.output = PourOver.union_sorted([1],[1]);
+      this.output = PourOver.unionSort([1],[1]);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Union 2', function() {
-      this.output = PourOver.union_sorted([1],[2]);
+      this.output = PourOver.unionSort([1],[2]);
       this.expected = [1,2];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Union 1', function() {
-      this.output = PourOver.union_sorted([1],[]);
+      this.output = PourOver.unionSort([1],[]);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Union 2', function() {
-      this.output = PourOver.union_sorted([],[1]);
+      this.output = PourOver.unionSort([],[1]);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
@@ -38,32 +38,32 @@ describe('Basic Operations', function() {
 
   describe('Intersect Sorts', function() {
     it('should run a Standard Intersect 1', function() {
-      this.output = PourOver.intersect_sorted([1,3,7,8,9], [1,2,3,4,5,9]);
+      this.output = PourOver.intersectSort([1,3,7,8,9], [1,2,3,4,5,9]);
       this.expected = [1,3,9];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Standard Intersect 2', function() {
-      this.output = PourOver.intersect_sorted([1,3,4,5,7,8,9,14,20,70], [4,5,20]);
+      this.output = PourOver.intersectSort([1,3,4,5,7,8,9,14,20,70], [4,5,20]);
       this.expected = [4,5,20];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Intersect 1', function() {
-      this.output = PourOver.intersect_sorted([1], [1]);
+      this.output = PourOver.intersectSort([1], [1]);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Intersect 2', function() {
-      this.output = PourOver.intersect_sorted([1], [2]);
+      this.output = PourOver.intersectSort([1], [2]);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Intersect 2', function() {
-      this.output = PourOver.intersect_sorted([1], []);
+      this.output = PourOver.intersectSort([1], []);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Intersect 2', function() {
-      this.output = PourOver.intersect_sorted([], [1]);
+      this.output = PourOver.intersectSort([], [1]);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
@@ -71,32 +71,32 @@ describe('Basic Operations', function() {
 
   describe('Subtract Sorts', function() {
     it('should run a Standard Subtract 1', function() {
-      this.output = PourOver.subtract_sorted([1,3,7,8,9], [3,6,7]);
+      this.output = PourOver.subtractSort([1,3,7,8,9], [3,6,7]);
       this.expected = [1,8,9];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Standard Subtract 2', function() {
-      this.output = PourOver.subtract_sorted([1,3,4,5,7,8,9,14,20,70], [4,5,20]);
+      this.output = PourOver.subtractSort([1,3,4,5,7,8,9,14,20,70], [4,5,20]);
       this.expected = [1,3,7,8,9,14,70];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Subtract 1', function() {
-      this.output = PourOver.subtract_sorted([1], [1]);
+      this.output = PourOver.subtractSort([1], [1]);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Tiny Subtract 2', function() {
-      this.output = PourOver.subtract_sorted([1], [2]);
+      this.output = PourOver.subtractSort([1], [2]);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Subtract 2', function() {
-      this.output = PourOver.subtract_sorted([1], []);
+      this.output = PourOver.subtractSort([1], []);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Subtract 2', function() {
-      this.output = PourOver.subtract_sorted([], [1]);
+      this.output = PourOver.subtractSort([], [1]);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
@@ -104,22 +104,22 @@ describe('Basic Operations', function() {
 
   describe('Insert Sorts', function() {
     it('should run a Standard Insert', function() {
-      this.output = PourOver.insert_sorted([1,3,5,8], 7);
+      this.output = PourOver.insertSort([1,3,5,8], 7);
       this.expected = [1,3,5,7,8];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Beginning Insert', function() {
-      this.output = PourOver.insert_sorted([1,3,5], 0);
+      this.output = PourOver.insertSort([1,3,5], 0);
       this.expected = [0,1,3,5];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an End Insert', function() {
-      this.output = PourOver.insert_sorted([1,3,5], 7);
+      this.output = PourOver.insertSort([1,3,5], 7);
       this.expected = [1,3,5,7];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Insert', function() {
-      this.output = PourOver.insert_sorted([], 1);
+      this.output = PourOver.insertSort([], 1);
       this.expected = [1];
       this.output.should.deep.equal(this.expected);
     });
@@ -127,22 +127,22 @@ describe('Basic Operations', function() {
 
   describe('Remove Sorts', function() {
     it('should run a Standard Remove', function() {
-      this.output = PourOver.remove_sorted([1,3,8,9], 8);
+      this.output = PourOver.removeSort([1,3,8,9], 8);
       this.expected = [1,3,9];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Beginning Remove', function() {
-      this.output = PourOver.remove_sorted([1,3,8,9], 1);
+      this.output = PourOver.removeSort([1,3,8,9], 1);
       this.expected = [3,8,9];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an End Remove', function() {
-      this.output = PourOver.remove_sorted([1,3,8,9], 9);
+      this.output = PourOver.removeSort([1,3,8,9], 9);
       this.expected = [1,3,8];
       this.output.should.deep.equal(this.expected);
     });
     it('should run an Empty Remove', function() {
-      this.output = PourOver.remove_sorted([], 1);
+      this.output = PourOver.removeSort([], 1);
       this.expected = [];
       this.output.should.deep.equal(this.expected);
     });
@@ -150,14 +150,14 @@ describe('Basic Operations', function() {
 
   describe('Permutation', function() {
     it('should run a Permute Subset', function() {
-      this.permutation = PourOver.build_permutation_array([{cid: 1, name: "Erik"},{cid: 2, name: "Brad"}, {cid: 3, name: "Chris"}],function(a,b){return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;});
-      this.output = PourOver.permute_from_array([1,2], this.permutation);
+      this.permutation = PourOver.buildPermutationArray([{cid: 1, name: "Erik"},{cid: 2, name: "Brad"}, {cid: 3, name: "Chris"}],function(a,b){return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;});
+      this.output = PourOver.permuteFromArray([1,2], this.permutation);
       this.expected = [2,1];
       this.output.should.deep.equal(this.expected);
     });
     it('should run a Permute Whole set', function() {
-      this.permutation = PourOver.build_permutation_array([{cid: 1, name: "Erik"},{cid: 2, name: "Brad"}, {cid: 3, name: "Chris"}],function(a,b){return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;});
-      this.output = PourOver.permute_from_array([1,2,3], this.permutation);
+      this.permutation = PourOver.buildPermutationArray([{cid: 1, name: "Erik"},{cid: 2, name: "Brad"}, {cid: 3, name: "Chris"}],function(a,b){return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;});
+      this.output = PourOver.permuteFromArray([1,2,3], this.permutation);
       this.expected = [2,3,1];
       this.output.should.deep.equal(this.expected);
     });
