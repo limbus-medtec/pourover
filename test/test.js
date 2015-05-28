@@ -1,6 +1,8 @@
 var should = require('chai').should();
 var _ = require('underscore');
-var PourOver = require('../');
+var PourOver = Object.create(require('../'));
+
+console.log(Object.create(PourOver));
 
 describe('Basic Operations', function() {
   describe('Union Sorts', function() {

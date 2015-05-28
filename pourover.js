@@ -1,8 +1,154 @@
-var PourOver = (function() {
-  var deprecationWarn = function(name, nextName) {
-    console.warn("Deprecation warning: " + name + " will be renamed to " + nextName + " in the next major release.");
-  };
+var PourOver = {
 
+  /**
+   * unionSort - description
+   *
+   * @param  {type} a description
+   * @param  {type} b description
+   * @return {type}   description
+   */
+  unionSort: function(a, b) {
+    var lowA = 0,
+      lowB = 0,
+      highA = a.length,
+      highB = b.length,
+      result = [],
+      la, lb;
+    while (highA > lowA || highB > lowB) {
+      la = a[lowA];
+      lb = b[lowB];
+      if (la === void 0) la = Infinity;
+      if (lb === void 0) lb = Infinity;
+      if (lowA == highA) {
+        return result.concat(b.slice(lowB, highB));
+      }
+      if (lowB == highB) {
+        return result.concat(a.slice(lowA, highA));
+      }
+      if (la == lb) {
+        result.push(la);
+        lowA++;
+        lowB++;
+      } else if (la < lb) {
+        result.push(la);
+        lowA++;
+      } else {
+        result.push(lb);
+        lowB++;
+      }
+    }
+    return result;
+  },
+
+  /**
+   * @alias       unionSort
+   * @deprecated  since version 2.0.0
+   */
+  union_sorted: function(a, b) { return this.unionSort(a, b); },
+  intersect_sorted: function(a, b) {
+    var lowA = 0,
+      lowB = 0,
+      highA = a.length,
+      highB = b.length,
+      result = [],
+      la, lb;
+    while (highA > lowA && highB > lowB) {
+      la = a[lowA];
+      lb = b[lowB];
+      if (la == lb) {
+        result.push(la);
+        lowA++;
+        lowB++;
+      } else if (la < lb) {
+        lowA++;
+      } else {
+        lowB++;
+      }
+    }
+    return result;
+  },
+
+  /**
+   * subtractSort - remove
+   *
+   * @param  {type} a description
+   * @param  {type} b description
+   * @return {type}   description
+   */
+  subtractSort: function(a, b) {
+    var lowA = 0,
+      lowB = 0,
+      highA = a.length,
+      highB = b.length,
+      result = [],
+      la, lb;
+    while (highA > lowA || highB > lowB) {
+      la = a[lowA];
+      lb = b[lowB];
+      if (highA == lowA) {
+        return result;
+      }
+      if (highB == lowB) {
+        return result.concat(a.slice(lowA, highA));
+      }
+      if (la == lb) {
+        lowA++;
+        lowB++;
+      } else if (la < lb) {
+        result.push(la);
+        lowA++;
+      } else {
+        lowB++;
+      }
+    }
+    return result;
+  },
+
+  /**
+   * @alias       subtractSort
+   * @deprecated  since version 2.0.0
+   */
+  subtract_sorted: function(a, b) { return this.subtractSort(a, b); },
+
+  /**
+   * insertSort - insert elements into Array
+   *
+   * @param  {Array} set     current Array
+   * @param  {Array} element elements to be added
+   * @return {Array}         new Array
+   */
+  insertSort: function(set, element) {
+    var length = set.length,
+      i = 0,
+      last_elem = set[length - 1];
+    if (element > last_elem) {
+      set.push(element);
+      return set;
+    }
+    while (i < length) {
+      if (element < set[i]) {
+        return set.slice(0, i).concat([element]).concat(set.slice(i, length));
+      } else {
+        i++;
+      }
+    }
+    set.push(element);
+    return set;
+  },
+
+  /**
+   * @alias       insertSorted
+   * @deprecated  since version 2.0.0
+   */
+  insert_sorted: function(a, b) {
+    return this.insertSorted(a, b);
+  },
+};
+
+module.exports = PourOver;
+
+(function(root, PourOver, _) {
+  "use strict";
   var ctor = function() {};
 
   var create = _.create || function(prototype) {
@@ -12,135 +158,22 @@ var PourOver = (function() {
     return result;
   };
 
+  /**
+   * Utility functions
+   * Skip down to "Collections" for the real meat of PourOver.
+   */
   PourOver = {
-    // Utility functions. Skip down to "Collections" for the real meat of PourOver.
-    //
-    // # The basic sorted set operations
-    //
-
-    union_sorted: function(a, b) {
-      deprecationWarn("union_sorted", "unionSort");
-      return this.unionSort(a,b);
-    },
-    unionSort: function(a, b) {
-
-      // Make more efficient by just copying at Infinity
-      var lowa = 0,
-        lowb = 0,
-        higha = a.length,
-        highb = b.length,
-        result = [],
-        la, lb;
-      while (higha > lowa || highb > lowb) {
-        la = a[lowa];
-        lb = b[lowb];
-        if (_.isUndefined(la)) la = Infinity;
-        if (_.isUndefined(lb)) lb = Infinity;
-        if (lowa == higha) {
-          return result.concat(b.slice(lowb, highb));
-        }
-        if (lowb == highb) {
-          return result.concat(a.slice(lowa, higha));
-        }
-        if (la == lb) {
-          result.push(la);
-          lowa++;
-          lowb++;
-        } else if (la < lb) {
-          result.push(la);
-          lowa++;
-        } else {
-          result.push(lb);
-          lowb++;
-        }
-      }
-      return result;
-    },
-
-    intersect_sorted: function(a, b) {
-      deprecationWarn("intersect_sorted", "intersectSort");
-      return this.intersectSort(a, b);
-    },
-    intersectSort: function(a, b) {
-      var lowa = 0,
-        lowb = 0,
-        higha = a.length,
-        highb = b.length,
-        result = [],
-        la, lb;
-      while (higha > lowa && highb > lowb) {
-        la = a[lowa];
-        lb = b[lowb];
-
-
-        if (la == lb) {
-          result.push(la);
-          lowa++;
-          lowb++;
-        } else if (la < lb) {
-          lowa++;
-        } else {
-          lowb++;
-        }
-      }
-      return result;
-    },
-
-    subtract_sorted: function(a, b) {
-      deprecationWarn("subtract_sorted", "subtractSort");
-      return this.subtractSort(a, b);
-    },
-    subtractSort: function(a, b) {
-      var lowa = 0,
-        lowb = 0,
-        higha = a.length,
-        highb = b.length,
-        result = [],
-        la, lb;
-      while (higha > lowa || highb > lowb) {
-        la = a[lowa];
-        lb = b[lowb];
-        if (higha == lowa) {
-          return result;
-        }
-        if (highb == lowb) {
-          return result.concat(a.slice(lowa, higha));
-        }
-        if (la == lb) {
-          lowa++;
-          lowb++;
-        } else if (la < lb) {
-          result.push(la);
-          lowa++;
-        } else {
-          lowb++;
-        }
-      }
-      return result;
-    },
-
-    insert_sorted: function(a, b) {
-      deprecationWarn("insert_sorted", "insertSort");
-      return this.insertSort(a, b);
-    },
-    insertSort: function(set, element) {
-      var length = set.length,
-        i = 0,
-        last_elem = set[length - 1];
-      if (element > last_elem) {
-        set.push(element);
-        return set;
-      }
-      while (i < length) {
-        if (element < set[i]) {
-          return set.slice(0, i).concat([element]).concat(set.slice(i, length));
-        } else {
-          i++;
-        }
-      }
-      set.push(element);
-      return set;
-    },
+    /**
+     * Union Sort
+     *
+     * @method
+     * @param {Array} a
+     * @param {Array} b
+     * @returns {Array} result
+     *
+     * @todo Make more efficient by just copying at Infinity
+    */
+    ,
 
     //
     // # Sort support
@@ -149,11 +182,7 @@ var PourOver = (function() {
     // Sort the set according to some function and then store an array of the translations
     // of the indicies. So if the first item went to index 2 after being sorted, put 2 in
     // the first spot of the permutation array.
-    build_permutation_array: function(a, b) {
-      deprecationWarn("build_permutation_array", "buildPermutationArray");
-      return this.buildPermutationArray(a, b);
-    },
-    buildPermutationArray: function(set, sort) {
+    build_permutation_array: function(set, sort) {
       var sorted_set = _.clone(set),
         perm = [];
       if (typeof(sort) === "function") {
@@ -168,13 +197,8 @@ var PourOver = (function() {
       });
       return perm;
     },
-
     // Use a permutation array to resort a subset of a collection.
-    permute_from_array: function(a, b) {
-      deprecationWarn("permute_from_array", "permuteFromArray");
-      return this.permuteFromArray(a, b);
-    },
-    permuteFromArray: function(collection, perm) {
+    permute_from_array: function(collection, perm) {
       var output = [];
       if (typeof(collection[0]) === "number") {
         _.each(collection, function(i) {
@@ -187,13 +211,8 @@ var PourOver = (function() {
       }
       return _.without(output, undefined);
     },
-
     // Remove an element from a sorted set.
-    remove_sorted: function(a, b) {
-      deprecationWarn("remove_sorted", "removeSort");
-      return this.removeSort(a, b);
-    },
-    removeSort: function(set, element) {
+    remove_sorted: function(set, element) {
       var length = set.length,
         i = 0;
       while (i < length) {
@@ -205,12 +224,7 @@ var PourOver = (function() {
       }
       return set;
     },
-
     bisect_by: function(f) {
-      deprecationWarn("bisect_by", "bisectBy");
-      return this.bisectBy(f);
-    },
-    bisectBy: function(f) {
       // Thanks to crossfilter (https://github.com/square/crossfilter) for this implementation.
       function bisectLeft(a, x, lo, hi) {
         while (lo < hi) {
@@ -258,7 +272,7 @@ var PourOver = (function() {
               return that.fn(p, i);
             }),
             matching_cids = _.pluck(matching_items, 'cid');
-          p.matching_cids = PourOver.unionSort(p.matching_cids, matching_cids);
+          p.matching_cids = PourOver.union_sorted(p.matching_cids, matching_cids);
         });
       },
       // ### Exact: the fastest caches.
@@ -270,7 +284,7 @@ var PourOver = (function() {
         _.each(items, function(i) {
           var p = that.possibilities[i[attr]];
           if (p) {
-            p.matching_cids = PourOver.insertSort(p.matching_cids, i.cid);
+            p.matching_cids = PourOver.insert_sorted(p.matching_cids, i.cid);
           }
         });
       },
@@ -284,7 +298,7 @@ var PourOver = (function() {
           _.each(i[attr], function(v) {
             var p = that.possibilities[v];
             if (p) {
-              p.matching_cids = PourOver.insertSort(p.matching_cids, i.cid);
+              p.matching_cids = PourOver.insert_sorted(p.matching_cids, i.cid);
             }
           });
         });
@@ -294,6 +308,7 @@ var PourOver = (function() {
       }
     }
   };
+
   // Copied from Backbone
   var array = [];
   var push = array.push;
@@ -782,9 +797,9 @@ var PourOver = (function() {
       var that = this;
       this.sorts[sort.name] = sort;
       sort.collection = this;
-      sort.rebuildSort();
+      sort.rebuild_sort();
       this.on("change", function() {
-        sort.rebuildSort(true);
+        sort.rebuild_sort(true);
       });
       // Like filters, if you set `associated_attrs` on a sort, they will rebuild themselves whenever any item in the collection undergoes a change
       // on that attribute.
@@ -792,7 +807,7 @@ var PourOver = (function() {
       if (sort.associated_attrs) {
         _.each(sort.associated_attrs, function(a) {
           that.on("change:" + a, function(objs) {
-            sort.rebuildSort();
+            sort.rebuild_sort();
           });
         });
       }
@@ -972,7 +987,7 @@ var PourOver = (function() {
         opts = {};
       }
       this.name = name;
-      this.possibilities = this.createPossibilities(values);
+      this.possibilities = this.create_possibilities(values);
       this.values = _.pluck(values, "value");
       _.extend(this, opts);
       this.initialize.apply(this, arguments);
@@ -985,11 +1000,7 @@ var PourOver = (function() {
 
     // Given an array of possible values, initializes the object that will store the cached results
     // of querying for that possibility.
-    create_possibilities: function(a) {
-      deprecationWarn("create_possibilities", "createPossibilities");
-      return this.createPossibilities(a);
-    },
-    createPossibilities: function(vs) {
+    create_possibilities: function(vs) {
       var o = {};
       _.each(vs, function(v) {
         var name = v.name || String(v.value);
@@ -1023,7 +1034,7 @@ var PourOver = (function() {
         return a - b;
       });
       _.each(this.possibilities, function(p) {
-        p.matching_cids = PourOver.subtractSort(p.matching_cids, cids);
+        p.matching_cids = PourOver.subtract_sorted(p.matching_cids, cids);
       });
     },
 
@@ -1187,15 +1198,11 @@ var PourOver = (function() {
 
     // Use a sort to order an array of cids
     sort: function(set) {
-      return PourOver.permuteFromArray(set, this.permutation_array);
+      return PourOver.permute_from_array(set, this.permutation_array);
     },
 
     // Recache the results of sorting the collection.
     rebuild_sort: function(new_items) {
-      deprecationWarn("rebuild_sort", "rebuildSort");
-      this.rebuildSort(new_items);
-    },
-    rebuildSort: function(new_items) {
       if (typeof(new_items) === "undefined") {
         new_items = false;
       }
@@ -1204,7 +1211,7 @@ var PourOver = (function() {
       } else {
         var items = this.collection.items;
       }
-      this.permutation_array = PourOver.buildPermutationArray(items, this);
+      this.permutation_array = PourOver.build_permutation_array(items, this);
       this.trigger("resort", new_items);
     }
   });
@@ -1346,13 +1353,13 @@ var PourOver = (function() {
         that.view_sorts[sort.name] = sort;
         sort.collection = that.collection;
         sort.view = that;
-        sort.rebuildSort();
+        sort.rebuild_sort();
         that.on("selectionChange", function(attrs) {
           if (sort.associated_attrs === undefined || attrs === "*") {
-            sort.rebuildSort();
+            sort.rebuild_sort();
           }
           if (sort.associated_attrs && _.intersection(sort.associated_attrs, attrs).length > 0) {
-            sort.rebuildSort();
+            sort.rebuild_sort();
           }
         });
       });
@@ -1413,14 +1420,14 @@ var PourOver = (function() {
       }
       if (this.page_size == Infinity) {
         if (this.current_sort) {
-          var items = this.match_set.allSorted(this.current_sort);
+          var items = this.match_set.all_sorted(this.current_sort);
         } else {
           var items = this.match_set.all();
         }
       } else {
         // TODO: Slice cids before reassociating
         if (this.current_sort) {
-          var items = this.match_set.allSortedCids(this.current_sort);
+          var items = this.match_set.all_sorted_cids(this.current_sort);
           items = items.slice(this.page_size * page, this.page_size * (page + 1));
           var ordered_cids = _.clone(items).sort(function(a, b) {
             return a - b;
@@ -1450,7 +1457,7 @@ var PourOver = (function() {
     resetPage: function() {
       if (this.last_head_cid) {
         if (this.current_sort) {
-          this.current_sort.rebuildSort();
+          this.current_sort.rebuild_sort();
         }
         this.pageTo(this.last_head_cid, true);
       }
@@ -1472,7 +1479,7 @@ var PourOver = (function() {
         var silent = false;
       }
       if (this.current_sort) {
-        var index = _.indexOf(this.match_set.allSortedCids(this.current_sort), cid),
+        var index = _.indexOf(this.match_set.all_sorted_cids(this.current_sort), cid),
           len = this.match_set.cids.length,
           page = Math.floor(index / this.page_size);
       } else {
@@ -1557,7 +1564,7 @@ var PourOver = (function() {
       } else if (!other_matches) {
         return this;
       } else {
-        var set = PourOver.intersectSort(this.cids, other_matches.cids);
+        var set = PourOver.intersect_sorted(this.cids, other_matches.cids);
         return new PourOver.MatchSet(set, this.collection, this.stack.concat([
           ["and", other_matches.stack]
         ]));
@@ -1571,7 +1578,7 @@ var PourOver = (function() {
       } else if (!other_matches) {
         return this;
       } else {
-        var set = PourOver.unionSort(this.cids, other_matches.cids);
+        var set = PourOver.union_sorted(this.cids, other_matches.cids);
         return new PourOver.MatchSet(set, this.collection, this.stack.concat([
           ["or", other_matches.stack]
         ]));
@@ -1583,7 +1590,7 @@ var PourOver = (function() {
       if (this.stack.length < 1 || !other_matches) {
         return this;
       } else {
-        var set = PourOver.subtractSort(this.cids, other_matches.cids);
+        var set = PourOver.subtract_sorted(this.cids, other_matches.cids);
         return new PourOver.MatchSet(set, this.collection, this.stack.concat([
           ["not", other_matches.stack]
         ]));
@@ -1601,11 +1608,7 @@ var PourOver = (function() {
     },
 
     // Return all the items corresponding to the cids cached on the MatchSet AND sorted by sort s.
-    all_sorted: function(a) {
-      deprecationWarn("all_sorted", "allSorted");
-      return this.allSorted(a);
-    },
-    allSorted: function(s) {
+    all_sorted: function(s) {
       var c = this.all();
       if (s) {
         return s.sort(c);
@@ -1615,11 +1618,7 @@ var PourOver = (function() {
     },
 
     // Sort the cached cids.
-    all_sorted_cids: function(a) {
-      deprecationWarn("all_sorted_cids", "allSortedCids");
-      return this.allSortedCids(a);
-    },
-    allSortedCids: function(s) {
+    all_sorted_cids: function(s) {
       var c = this.cids;
       if (s) {
         return s.sort(c);
@@ -1968,7 +1967,7 @@ var PourOver = (function() {
       });
       if (this.current_query) {
         var current_query = this.current_query.cids,
-          new_query = PourOver.unionSort(current_query, cids);
+          new_query = PourOver.union_sorted(current_query, cids);
       } else {
         var new_query = cids;
       }
@@ -1982,7 +1981,7 @@ var PourOver = (function() {
         return a - b;
       });
       var current_query = this.current_query.cids,
-        new_query = PourOver.subtractSort(current_query, cids);
+        new_query = PourOver.subtract_sorted(current_query, cids);
       this.query(new_query);
     }
   });
@@ -2116,7 +2115,7 @@ var PourOver = (function() {
         return that.possibilities[p];
       });
       cids = _.reduce(possibilities, function(m, i) {
-        return PourOver.unionSort(m, i.matching_cids);
+        return PourOver.union_sorted(m, i.matching_cids);
       }, []);
       return new PourOver.MatchSet(cids, this.getCollection(), [
         [this, query]
@@ -2168,7 +2167,7 @@ var PourOver = (function() {
       var li, hi;
       var n = this.values.length;
 
-      var bisect = PourOver.bisectBy(function(a) {
+      var bisect = PourOver.bisect_by(function(a) {
         return a.val;
       });
 
@@ -2240,7 +2239,7 @@ var PourOver = (function() {
     },
     reset: function(items) {
       this.order = _.pluck(items, this.attr);
-      this.rebuildSort();
+      this.rebuild_sort();
     },
 
     // Insert an item into the sort.
@@ -2254,7 +2253,7 @@ var PourOver = (function() {
       var new_order = _.pluck(items, this.attr),
         args = [index, 0].concat(new_order);
       this.order.splice.apply(this.order, args);
-      this.rebuildSort();
+      this.rebuild_sort();
     },
 
     // Remove an item from the sort.
@@ -2264,7 +2263,7 @@ var PourOver = (function() {
       }
       var attrs = _.pluck(items, this.attr);
       this.order = _.difference(this.order, attrs);
-      this.rebuildSort();
+      this.rebuild_sort();
     },
 
     // Move an item from one place to another in the sort.
@@ -2339,5 +2338,5 @@ var PourOver = (function() {
     }
   });
 
-  return PourOver;
-})();
+  return new PourOver();
+}));
