@@ -1,14 +1,3 @@
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(["underscore"], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'));
-  } else {
-    root.PourOver = factory(root._);
-  }
-}(this, function(_) {
-
 var PourOver = (function() {
   var deprecationWarn = function(name, nextName) {
     console.warn("Deprecation warning: " + name + " will be renamed to " + nextName + " in the next major release.");
@@ -567,7 +556,7 @@ var PourOver = (function() {
         }
       } else {
         while (low < high && lc < hc) {
-          if (_.include(vals, (i = items[low])[attr_name])) {
+          if (_.includes(vals, (i = items[low])[attr_name])) {
             output.push(i);
             vals = _.without(vals, i[attr_name]);
             low++;
@@ -681,7 +670,7 @@ var PourOver = (function() {
           oldi = 0,
           delete_cids = _.pluck(i, "cid");
         while (oldi < old_length && delete_cids.length > 0) {
-          if (_.include(delete_cids, old_items[oldi].cid)) {
+          if (_.includes(delete_cids, old_items[oldi].cid)) {
 
           } else {
             new_items.push(old_items[oldi]);
@@ -1438,7 +1427,7 @@ var PourOver = (function() {
           });
           var unsorted_items = this.collection.get(ordered_cids);
           items = _.map(items, function(i) {
-            return _.findWhere(unsorted_items, {
+            return _.find(unsorted_items, {
               cid: i
             });
           });
@@ -1548,17 +1537,17 @@ var PourOver = (function() {
         };
       if (typeof(operation) === "object") {
         match_set = operation.getFn(step[1]);
-        return this.refresh(_.rest(s), match_set);
+        return this.refresh(_.drop(s), match_set);
       } else if (operation === "all" || step === "all") {
         var cids = _.pluck(this.collection.items, "cid");
         match_set = new PourOver.MatchSet(cids, this, ["all"]);
-        return this.refresh(_.rest(s), match_set);
+        return this.refresh(_.drop(s), match_set);
       } else if (is_compound(operation)) {
         var m = match_set[operation](this.refresh(step[1]));
       } else {
         var m = this.refresh(step[1]);
       }
-      return this.refresh(_.rest(s), m);
+      return this.refresh(_.drop(s), m);
     },
 
     // Intersect this MatchSet with another MatchSet.
@@ -1692,10 +1681,10 @@ var PourOver = (function() {
         return output;
       } else if (typeof(s[0][0]) === "object") {
         output.push(s[0][1]);
-        return this.getSimpleSelectState(match_set, _.rest(s), output);
+        return this.getSimpleSelectState(match_set, _.drop(s), output);
       } else if (s[0][0] === "or") {
         output = output.concat(this.getSimpleSelectState(match_set, s[0][1]));
-        return this.getSimpleSelectState(match_set, _.rest(s), output);
+        return this.getSimpleSelectState(match_set, _.drop(s), output);
       } else {
         throw "This does not appear to be a valid, simple selectElement stack.";
       }
@@ -1714,10 +1703,10 @@ var PourOver = (function() {
         return output;
       } else if (typeof(s[0][0]) === "object") {
         output.push(s[0][1]);
-        return this.getIntersectedSelectState(match_set, _.rest(s), output);
+        return this.getIntersectedSelectState(match_set, _.drop(s), output);
       } else if (s[0][0] === "and") {
         output = output.concat(this.getIntersectedSelectState(match_set, s[0][1]));
-        return this.getIntersectedSelectState(match_set, _.rest(s), output);
+        return this.getIntersectedSelectState(match_set, _.drop(s), output);
       } else {
         throw "This does not appear to be a valid, simple selectElement stack.";
       }
@@ -2285,7 +2274,7 @@ var PourOver = (function() {
       }
       var attrs = _.pluck(items, this.attr);
       this.order = _.map(this.order, function(o) {
-        return _.include(attrs, o) ? null : o;
+        return _.includes(attrs, o) ? null : o;
       });
       this.insert(items, index);
       this.order = _.compact(this.order);
@@ -2352,7 +2341,3 @@ var PourOver = (function() {
 
   return PourOver;
 })();
-
-return PourOver;
-
-}));
