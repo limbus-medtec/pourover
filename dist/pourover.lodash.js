@@ -644,21 +644,21 @@ var PourOver = (function() {
     // Remove items from the collection, triggering the appropriate events to keep all dependent sort and filter sets up-to-date.
     // This functionality is only included begrudgingly. Pourover is best for collections that rarely remove members.
     // TODO: Optimize
-    removeItems: function(i, isSorted) {
+    removeItems: function(toRemove, isSorted) {
       this.trigger("will_change");
       if (typeof(isSorted) === "undefined") {
         var isSorted = false;
       }
-      if (!_.isArray(i)) {
-        var i = [i];
+      if (!_.isArray(toRemove)) {
+        var toRemove = [toRemove];
       }
       if (isSorted) {
-        i = i.sort(function(a, b) {
-          return a.cid - b.cid;
+		toRemove = _.sortBy(toRemove, (function(elem1, elem2) {
+          return elem1.cid - elem2.cid;
         });
         var new_items = [],
           old_items = this.items,
-          new_length = i.length,
+          new_length = toRemove.length,
           old_length = this.items.length,
           newi = 0,
           oldi = 0;
@@ -666,7 +666,7 @@ var PourOver = (function() {
           if (!newi < new_length) {
             new_items = new_items.concat(old_items.slice(oldi));
             break;
-          } else if (old_items[oldi].cid === i[newi].cid) {
+          } else if (old_items[oldi].cid === toRemove[newi].cid) {
             newi++;
             oldi++;
           } else {
@@ -679,7 +679,7 @@ var PourOver = (function() {
           old_items = this.items,
           old_length = this.items.length,
           oldi = 0,
-          delete_cids = _.map(i, "cid");
+          delete_cids = _.map(toRemove, "cid");
         while (oldi < old_length && delete_cids.length > 0) {
           if (_.includes(delete_cids, old_items[oldi].cid)) {
 
@@ -691,7 +691,7 @@ var PourOver = (function() {
       }
       this.items = new_items;
       this.regenerateFilterSets();
-      this.trigger("change", _(i).map("cid"));
+      this.trigger("change", _(toRemove).map("cid"));
     },
 
     // # Collection filter functions
